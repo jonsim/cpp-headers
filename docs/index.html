@@ -46,9 +46,12 @@
 <p>Currently all of these are implemented as pure headers (hence the repository name) which makes them lighter weight, easier to use and (frankly) easier to distribute. I may add fully fledged classes at a later point if necessary, but for now this repository is limited to very simple, robust building blocks designed to be performant and easier to integrate than a giant library such as boost.</p>
 <h2>License</h2>
 <p>All files are licensed under <a href="https://github.com/jonsim/cpp-headers/blob/master/LICENSE">the MIT license</a>.</p>
-<p>All the files may be distributed individually providing the copyright &amp; license header in each remains intact.</p>
+<p>The <code>src</code> folder contains all the headers. All the files within may be distributed individually providing the copyright &amp; license header in each remains intact.</p>
 <h1>Documentation</h1>
-<p>TODO </p>
+<p>Full doxygen reference documentation is hosted from the <code>docs</code> folder of this repository at <a href="https://jonsim.github.io/cpp-headers/">https://jonsim.github.io/cpp-headers/</a></p>
+<h2>Using the headers</h2>
+<p>The headers can be simply included as normal, e.g.: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="_circular_buffer_8h.html">CircularBuffer.h</a>&quot;</span></div></div><!-- fragment --><h2>Contributing</h2>
+<p>The project itself can be built from the repository root as: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;make</div></div><!-- fragment --><p> which builds the documentation. This updates the html files in the <code>docs</code> folder and also outputs <code>doxygen-output/cpp-headers-reference.pdf</code> (which isn't included in the published repository to avoid adding unnecessary bloat). This requires doxygen &ge; 1.8 and a suitable TeX distribution installed. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

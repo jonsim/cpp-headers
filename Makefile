@@ -7,6 +7,6 @@ clean:
 docs: doxygen.cfg
 	doxygen $^
 	cp -a doxygen-output/html docs
-	#make -C doxygen-output/latex
-	#cp -a doxygen-output/latex/refman.pdf docs/cpp-headers-reference.pdf
+	make -C doxygen-output/latex
+	cp -a doxygen-output/latex/refman.pdf doxygen-output/cpp-headers-reference.pdf
 

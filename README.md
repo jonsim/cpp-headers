@@ -21,12 +21,33 @@ boost.
 All files are licensed under
 [the MIT license](https://github.com/jonsim/cpp-headers/blob/master/LICENSE).
 
-All the files may be distributed individually providing the copyright &amp;
-license header in each remains intact.
+The `src` folder contains all the headers. All the files within may be
+distributed individually providing the copyright &amp; license header in each
+remains intact.
 
 
 
 # Documentation
 
-TODO
+Full doxygen reference documentation is hosted from the `docs` folder of this
+repository at https://jonsim.github.io/cpp-headers/
+
+
+## Using the headers
+
+The headers can be simply included as normal, e.g.:
+```c
+#include "CircularBuffer.h"
+```
+
+
+## Contributing
+The project itself can be built from the repository root as:
+```sh
+make
+```
+which builds the documentation. This updates the html files in the `docs` folder
+and also outputs `doxygen-output/cpp-headers-reference.pdf` (which isn't
+included in the published repository to avoid adding unnecessary bloat). This
+requires doxygen &ge; 1.8 and a suitable TeX distribution installed.
 
