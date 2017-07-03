@@ -81,7 +81,7 @@ public:
     /**
      * \brief   Deconstructor.
      */
-    ~CircularBuffer(void)
+    virtual ~CircularBuffer(void)
     {
         delete[] buffer;
     }

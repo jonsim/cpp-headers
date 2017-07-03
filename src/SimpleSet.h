@@ -55,6 +55,11 @@ public:
     explicit SimpleSet(void) : set() {}
 
     /**
+     * \brief   SimpleSet Destructor.
+     */
+    virtual ~SimpleSet(void) {}
+
+    /**
      * \brief   Queries whether the set contains the given element.
      * \param   elem    The element to check for (will use ==).
      * \return  true if the element is already in the set, false otherwise.
