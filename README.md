@@ -37,7 +37,7 @@ repository at https://jonsim.github.io/cpp-headers/
 
 The headers can be simply included as normal, e.g.:
 ```c
-#include "CircularBuffer.h"
+#include "circular_buffer.h"
 ```
 
 
