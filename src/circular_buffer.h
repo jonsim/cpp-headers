@@ -40,22 +40,71 @@
  * \param SIZE  The number of elements to be stored in the buffer. 
  *              One space in the buffer is always left empty, so ensure that
  *              this is accounted for when the SIZE is decided upon (i.e.
- *              <tt>capacity = SIZE - 1</tt>).
+ *              <tt>capacity = SIZE - 1</tt>). SIZE must be >= 1 (which would
+ *              result in a buffer with no usable elements).
  */
 template <typename T, std::size_t SIZE>
 class circular_buffer {
+    static_assert(SIZE > 0, "SIZE must be > 0");
+
+protected:
+
 public:
     /** The type this buffer stores. */
     using value_type = T;
+
     /** An iterator type to iterate over elements in this buffer. */
-    using iterator = T*;
+    class iterator {
+    protected:
+        friend class circular_buffer;
+        constexpr iterator(circular_buffer<T, SIZE>& buf, std::size_t start) noexcept
+                : buffer(buf), pos(start) {};
+    public:
+        T& operator*() noexcept;
+        void operator++() noexcept;
+        const bool operator==(const iterator& other) noexcept;
+        const bool operator!=(const iterator& other) noexcept;
+    private:
+        circular_buffer<T, SIZE>& buffer;
+        std::size_t pos;
+    };
+
     /** A const-iterator type to iterate over elements in this buffer. */
-    using const_iterator = const T*;
+    class const_iterator {
+    protected:
+        friend class circular_buffer;
+        constexpr const_iterator(const circular_buffer<T, SIZE>& buf, std::size_t start) noexcept
+                : buffer(buf), pos(start) {};
+    public:
+        const T& operator*() noexcept;
+        void operator++() noexcept;
+        const bool operator==(const const_iterator& other) noexcept;
+        const bool operator!=(const const_iterator& other) noexcept;
+    private:
+        const circular_buffer<T, SIZE>& buffer;
+        std::size_t pos;
+    };
+
+
+    /**
+     * \brief   Constructor, initialising an empty circular_buffer.
+     */
+    constexpr circular_buffer() noexcept = default;
 
     /**
      * \brief   Constructor, initialising the circular_buffer.
+     *          Note: The first argument will be the first element inserted
+     *          into the buffer (i.e. accessible with <tt>front()</tt> or
+     *          <tt>at(0)</tt>), the last argument will be the last element
+     *          inserted (i.e. accessible with <tt>back()</tt> or
+     *          <tt>at(len()-1)</tt>).
      */
-    circular_buffer() = default;
+    template<typename... ARGS,
+             typename = typename std::enable_if<(sizeof...(ARGS) < SIZE)>::type>
+    constexpr circular_buffer(ARGS&&... args) noexcept
+            : buffer{std::forward<ARGS>(args)...}
+            , head(sizeof...(ARGS))
+            , tail(0) {}
 
     /**
      * \brief   Destructor.
@@ -92,7 +141,7 @@ public:
     /**
      * \brief   Treats the buffer like an array with indices <tt>[0,SIZE-1)</tt>
      *          and returns the item from the buffer located at the given index.
-     *          The <i>newest</i> element will be available at index 0.
+     *          The <b>oldest</b> element will be available at index 0.
      * \param   pos The index of the target element in the virtual 'array'.
      * \return  Reference to the target element.
      * \throws  std::out_of_range   If the index is invalid (i.e. not
@@ -104,7 +153,7 @@ public:
     /**
      * \brief   Treats the buffer like an array with indices <tt>[0,SIZE-1)</tt>
      *          and returns the item from the buffer located at the given index.
-     *          The <i>newest</i> element will be available at index 0.
+     *          The <b>oldest</b> element will be available at index 0.
      * \param   pos The index of the target element in the virtual 'array'.
      * \return  Reference to the target element.
      * \throws  std::out_of_range   If the index is invalid (i.e. not
@@ -116,7 +165,7 @@ public:
     /**
      * \brief   Treats the buffer like an array with indices <tt>[0,SIZE-1)</tt>
      *          and returns the item from the buffer located at the given index.
-     *          The <i>newest</i> element will be available at index 0.
+     *          The <b>oldest</b> element will be available at index 0.
      *          This operation does not perform bounds checking, accessing an
      *          uninitialised element causes undefined behaviour.
      * \param   pos The index of the target element in the virtual 'array'.
@@ -128,7 +177,7 @@ public:
     /**
      * \brief   Treats the buffer like an array with indices <tt>[0,SIZE-1)</tt>
      *          and returns the item from the buffer located at the given index.
-     *          The <i>newest</i> element will be available at index 0.
+     *          The <b>oldest</b> element will be available at index 0.
      *          This operation does not perform bounds checking, accessing an
      *          uninitialised element causes undefined behaviour.
      * \param   pos The index of the target element in the virtual 'array'.
@@ -188,7 +237,14 @@ public:
     void push_back(T&& item) noexcept;
 
     /**
-     * \brief   Removes the oldest item (if one exists) from the buffer.
+     * \brief   Removes the newest item from the buffer.
+     *          Calling <tt>pop_back()</tt> on an empty buffer causes undefined
+     *          behaviour.
+     */
+    void pop_back() noexcept;
+
+    /**
+     * \brief   Removes the oldest item from the buffer.
      *          Calling <tt>pop_front()</tt> on an empty buffer causes undefined
      *          behaviour.
      */
@@ -246,7 +302,7 @@ private:
      * \param   x   x in the calculation (x % SIZE).
      * \return      The solution to the calculation (x % SIZE).
     */
-    constexpr std::size_t capped_mod(std::size_t x) const noexcept {
+    inline constexpr std::size_t capped_mod(std::size_t x) const noexcept {
         return x < SIZE ? x : x - SIZE;
     }
 };

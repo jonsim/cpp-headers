@@ -31,6 +31,41 @@
 
 
 template <typename T, std::size_t SIZE>
+T& circular_buffer<T, SIZE>::iterator::operator*() noexcept {
+    return buffer.buffer[pos];
+}
+template <typename T, std::size_t SIZE>
+void circular_buffer<T, SIZE>::iterator::operator++() noexcept {
+    pos = buffer.capped_mod(pos + 1);
+}
+template <typename T, std::size_t SIZE>
+const bool circular_buffer<T, SIZE>::iterator::operator==(const iterator& other) noexcept {
+    return &buffer == &other.buffer && pos == other.pos;
+}
+template <typename T, std::size_t SIZE>
+const bool circular_buffer<T, SIZE>::iterator::operator!=(const iterator& other) noexcept {
+    return !operator==(other);
+}
+
+template <typename T, std::size_t SIZE>
+const T& circular_buffer<T, SIZE>::const_iterator::operator*() noexcept {
+    return buffer.buffer[pos];
+}
+template <typename T, std::size_t SIZE>
+void circular_buffer<T, SIZE>::const_iterator::operator++() noexcept {
+    pos = buffer.capped_mod(pos + 1);
+}
+template <typename T, std::size_t SIZE>
+const bool circular_buffer<T, SIZE>::const_iterator::operator==(const const_iterator& other) noexcept {
+    return &buffer == &other.buffer && pos == other.pos;
+}
+template <typename T, std::size_t SIZE>
+const bool circular_buffer<T, SIZE>::const_iterator::operator!=(const const_iterator& other) noexcept {
+    return !operator==(other);
+}
+
+
+template <typename T, std::size_t SIZE>
 bool circular_buffer<T, SIZE>::full() const noexcept {
     return capped_mod(head + 1) == tail;
 }
@@ -68,18 +103,12 @@ T& circular_buffer<T, SIZE>::at(std::size_t pos) noexcept(false) {
 
 template <typename T, std::size_t SIZE>
 const T& circular_buffer<T, SIZE>::operator[](std::size_t pos) const noexcept {
-    // newest element (which we want to appear at [0]) is accessible from
-    // the head, but (head - index) may underflow, so increase by SIZE-1.
-    pos = capped_mod((head + SIZE - 1) - pos);
-    return buffer[pos];
+    return buffer[capped_mod(tail + pos)];
 }
 
 template <typename T, std::size_t SIZE>
 T& circular_buffer<T, SIZE>::operator[](std::size_t pos) noexcept {
-    // newest element (which we want to appear at [0]) is accessible from
-    // the head, but (head - index) may underflow, so increase by SIZE-1.
-    pos = capped_mod((head + SIZE - 1) - pos);
-    return buffer[pos];
+    return buffer[capped_mod(tail + pos)];
 }
 
 template <typename T, std::size_t SIZE>
@@ -121,26 +150,31 @@ void circular_buffer<T, SIZE>::push_back(T&& item) noexcept {
 }
 
 template <typename T, std::size_t SIZE>
+void circular_buffer<T, SIZE>::pop_back() noexcept {
+    head = capped_mod(head + SIZE - 1);
+}
+
+template <typename T, std::size_t SIZE>
 void circular_buffer<T, SIZE>::pop_front() noexcept {
     tail = capped_mod(tail + 1);
 }
 
 template <typename T, std::size_t SIZE>
 typename circular_buffer<T, SIZE>::iterator circular_buffer<T, SIZE>::begin() noexcept {
-    return &buffer[tail];
+    return iterator(*this, tail);
 }
 
 template <typename T, std::size_t SIZE>
 typename circular_buffer<T, SIZE>::const_iterator circular_buffer<T, SIZE>::begin() const noexcept {
-    return &buffer[tail];
+    return const_iterator(*this, tail);
 }
 
 template <typename T, std::size_t SIZE>
 typename circular_buffer<T, SIZE>::iterator circular_buffer<T, SIZE>::end() noexcept {
-    return &buffer[head];
+    return iterator(*this, head);
 }
 
 template <typename T, std::size_t SIZE>
 typename circular_buffer<T, SIZE>::const_iterator circular_buffer<T, SIZE>::end() const noexcept {
-    return &buffer[head];
+    return const_iterator(*this, head);
 }

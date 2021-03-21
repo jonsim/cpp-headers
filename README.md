@@ -14,6 +14,8 @@ for now this repository is limited to very simple, robust building blocks
 designed to be performant and easier to integrate than a giant library such as
 boost.
 
+All headers are written to be compatible with C++11 or newer.
+
 
 
 ## License
@@ -46,8 +48,9 @@ The project itself can be built from the repository root as:
 ```sh
 make
 ```
-which builds the documentation. This updates the html files in the `docs` folder
-and also outputs `doxygen-output/cpp-headers-reference.pdf` (which isn't
-included in the published repository to avoid adding unnecessary bloat). This
-requires doxygen &ge; 1.8 and a suitable TeX distribution installed.
+which builds the documentation and runs the tests. This updates the html files
+in the `docs` folder and also outputs `doxygen-output/cpp-headers-reference.pdf`
+(which isn't included in the published repository to avoid adding unnecessary
+bloat). This requires doxygen &ge; 1.8 and a suitable TeX distribution
+installed.
 
